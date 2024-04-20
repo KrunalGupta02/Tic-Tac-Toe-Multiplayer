@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import Square from "./components/Square/Square";
 import { io } from "socket.io-client";
+import Swal from "sweetalert2";
 
 const renderFrom = [
   [1, 2, 3],
@@ -18,6 +19,10 @@ const App = () => {
   const [playOnline, setPlayOnline] = useState(false);
 
   const [socket, setSocket] = useState(null);
+
+  const [playerName, setPlayerName] = useState("");
+
+  const [opponentName, setOpponentName] = useState("");
 
   const checkWinner = () => {
     // row dynamic
@@ -83,11 +88,47 @@ const App = () => {
     setPlayOnline(true);
   });
 
-  const playOnlineClick = () => {
+  socket?.on("OpponentNotFound", () => {
+    setOpponentName(false);
+  });
+
+  socket?.on("OpponentFound", (data) => {
+    console.log(data);
+    setOpponentName(data.opponentName);
+  });
+
+  const playOnlineClick = async () => {
+    const result = await takePlayerName();
+
+    if (!result.isConfirmed) {
+      return;
+    }
+    const username = result.value;
+    setPlayerName(username);
+
     const newSocket = io("http://localhost:3000", {
       autoConnect: true,
     });
+
+    newSocket?.emit("request_to_play", {
+      playerName: username,
+    });
+
     setSocket(newSocket);
+  };
+
+  const takePlayerName = async () => {
+    const result = await Swal.fire({
+      title: "Enter your name",
+      input: "text",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return "You need to write something!";
+        }
+      },
+    });
+    return result;
   };
 
   if (!playOnline) {
@@ -99,6 +140,25 @@ const App = () => {
       </div>
     );
   }
+
+  // If opponent is not available don't start the game
+  if (playOnline && !opponentName) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          height: "50vh",
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <p className="waiting_opponent">Waiting for Opponent...</p>
+      </div>
+    );
+  }
+
+  // Websocket / Socket.io code end
 
   return (
     <div className="main-div">
