@@ -24,6 +24,8 @@ const App = () => {
 
   const [opponentName, setOpponentName] = useState("");
 
+  const [playingAs, setPlayingAs] = useState(null);
+
   const checkWinner = () => {
     // row dynamic
     for (let row = 0; row < gameState.length; row++) {
@@ -93,8 +95,9 @@ const App = () => {
   });
 
   socket?.on("OpponentFound", (data) => {
-    console.log(data);
     setOpponentName(data.opponentName);
+
+    setPlayingAs(data.playingAs);
   });
 
   const playOnlineClick = async () => {
@@ -164,8 +167,20 @@ const App = () => {
     <div className="main-div">
       {/* Current move by player */}
       <div className="move-detection">
-        <div className="left">Yourself</div>
-        <div className="right">Opponent</div>
+        <div
+          className={`left ${
+            currentPlayer === playingAs ? "current-move-" + currentPlayer : ""
+          }`}
+        >
+          {playerName}
+        </div>
+        <div
+          className={`right ${
+            currentPlayer !== playingAs ? "current-move-" + currentPlayer : ""
+          }`}
+        >
+          {opponentName}
+        </div>
       </div>
 
       <div className="">
@@ -196,6 +211,9 @@ const App = () => {
           <h3 className="finished-state">It's a Draw</h3>
         )}
       </div>
+      {!finishedState && opponentName && (
+        <h2>You are playing against {opponentName}</h2>
+      )}
     </div>
   );
 };

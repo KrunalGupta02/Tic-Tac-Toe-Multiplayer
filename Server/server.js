@@ -45,10 +45,12 @@ io.on("connection", (socket) => {
       console.log("Opponent Found");
       currentUser.socket.emit("OpponentFound", {
         opponentName: opponentPlayer.playerName,
+        playingAs: "circle",
       });
 
       opponentPlayer.socket.emit("OpponentFound", {
         opponentName: currentUser.playerName,
+        playingAs: "cross",
       });
     } else {
       console.log("Opponent not Found");
