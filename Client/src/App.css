@@ -70,3 +70,7 @@
 .current-move-circle {
   background-color: #dd7f9f !important;
 }
+
+.grey-bg {
+  background-color: grey !important;
+}

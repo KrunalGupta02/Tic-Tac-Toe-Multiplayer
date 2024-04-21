@@ -215,14 +215,20 @@ const App = () => {
                   finishedState={finishedState}
                   finishedArrayState={finishedArrayState}
                   currentElement={e}
+                  playingAs={playingAs}
                 />
               );
             })
           )}
         </div>
-        {finishedState && finishedState !== "draw" && (
-          <h3 className="finished-state">{finishedState} won the game</h3>
-        )}
+        {finishedState &&
+          finishedState !== "opponentLeftMatch" &&
+          finishedState !== "draw" && (
+            <h3 className="finished-state">
+              {finishedState === playingAs ? "You " : finishedState} won the
+              game
+            </h3>
+          )}
         {finishedState && finishedState === "draw" && (
           <h3 className="finished-state">It's a Draw</h3>
         )}

@@ -54,6 +54,7 @@ const Square = ({
   finishedArrayState,
   socket,
   currentElement,
+  playingAs,
 }) => {
   const [icon, setIcon] = useState(null);
 
@@ -97,14 +98,21 @@ const Square = ({
         return newState;
       });
     }
+
+    // If player don't have their chance dont move them
+    if (playingAs !== currentPlayer) {
+      return;
+    }
   };
 
   return (
     <div
-      className={`square ${finishedState ? "not-allowed" : ""} ${
-        finishedArrayState.includes(id) ? finishedState + "-won" : ""
-      }`}
       onClick={clickOnSquare}
+      className={`square ${finishedState ? "not-allowed" : ""}
+      ${currentPlayer !== playingAs ? "not-allowed" : ""}
+       ${finishedArrayState.includes(id) ? finishedState + "-won" : ""}
+       ${finishedState && finishedState !== playingAs ? "grey-background" : ""}
+       `}
     >
       {currentElement === "circle"
         ? circleSvg
