@@ -52,6 +52,20 @@ io.on("connection", (socket) => {
         opponentName: currentUser.playerName,
         playingAs: "cross",
       });
+
+      currentUser.socket.on("playerMoveFromClient", (data) => {
+        opponentPlayer.socket.emit("playerMoveFromServer", {
+          // gameState: data.gameState,
+          ...data,
+        });
+      });
+
+      opponentPlayer.socket.on("playerMoveFromClient", (data) => {
+        currentUser.socket.emit("playerMoveFromServer", {
+          // gameState: data.gameState,
+          ...data,
+        });
+      });
     } else {
       console.log("Opponent not Found");
       currentUser.socket.emit("OpponentNotFound");

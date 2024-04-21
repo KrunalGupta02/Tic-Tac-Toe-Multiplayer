@@ -100,6 +100,19 @@ const App = () => {
     setPlayingAs(data.playingAs);
   });
 
+  socket?.on("playerMoveFromServer", (data) => {
+    // setGameState(data.gameState);
+    const id = data.state.id;
+    setGameState((prevState) => {
+      let newState = [...prevState];
+      const rowIndex = Math.floor(id / 3);
+      const colIndex = id % 3;
+      newState[rowIndex][colIndex] = data.state.sign;
+      return newState;
+    });
+    setCurrentPlayer(data.state.sign === "circle" ? "cross" : "circle");
+  });
+
   const playOnlineClick = async () => {
     const result = await takePlayerName();
 
@@ -192,13 +205,16 @@ const App = () => {
             arr.map((e, colIndex) => {
               return (
                 <Square
+                  socket={socket}
                   key={rowIndex * 3 + colIndex}
                   id={rowIndex * 3 + colIndex}
+                  gameState={gameState}
                   setGameState={setGameState}
                   currentPlayer={currentPlayer}
                   setCurrentPlayer={setCurrentPlayer}
                   finishedState={finishedState}
                   finishedArrayState={finishedArrayState}
+                  currentElement={e}
                 />
               );
             })
