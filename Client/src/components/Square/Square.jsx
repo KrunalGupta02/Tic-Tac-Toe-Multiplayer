@@ -59,6 +59,11 @@ const Square = ({
   const [icon, setIcon] = useState(null);
 
   const clickOnSquare = () => {
+    // Move in your chance only
+    if (playingAs !== currentPlayer) {
+      return;
+    }
+
     // If game is finished then game is over
     if (finishedState) {
       return;
@@ -97,11 +102,6 @@ const Square = ({
         newState[rowIndex][colIndex] = myCurrentPlayer;
         return newState;
       });
-    }
-
-    // If player don't have their chance dont move them
-    if (playingAs !== currentPlayer) {
-      return;
     }
   };
 

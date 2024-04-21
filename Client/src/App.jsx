@@ -84,6 +84,21 @@ const App = () => {
     }
   }, [gameState]);
 
+  // Sweet alert modal
+  const takePlayerName = async () => {
+    const result = await Swal.fire({
+      title: "Enter your name",
+      input: "text",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return "You need to write something!";
+        }
+      },
+    });
+    return result;
+  };
+
   // Websocket / Socket.io code
 
   socket?.on("connect", function () {
@@ -114,15 +129,17 @@ const App = () => {
   });
 
   socket?.on("opponentLeftMatch", () => {
-    setFinishedState("opponent left the match");
+    setFinishedState("opponentLeftMatch");
   });
 
   const playOnlineClick = async () => {
     const result = await takePlayerName();
 
+    // dont go inside if name is not filled
     if (!result.isConfirmed) {
       return;
     }
+
     const username = result.value;
     setPlayerName(username);
 
@@ -135,20 +152,6 @@ const App = () => {
     });
 
     setSocket(newSocket);
-  };
-
-  const takePlayerName = async () => {
-    const result = await Swal.fire({
-      title: "Enter your name",
-      input: "text",
-      showCancelButton: true,
-      inputValidator: (value) => {
-        if (!value) {
-          return "You need to write something!";
-        }
-      },
-    });
-    return result;
   };
 
   if (!playOnline) {
@@ -178,7 +181,7 @@ const App = () => {
     );
   }
 
-  // Websocket / Socket.io code end
+  //======= Websocket / Socket.io code end here ====== //
 
   return (
     <div className="main-div">
@@ -200,7 +203,7 @@ const App = () => {
         </div>
       </div>
 
-      <div className="">
+      <div>
         <h1 className="water-background game-heading">Tic Tac Toe</h1>
 
         {/* Render the 9 square */}
@@ -233,9 +236,11 @@ const App = () => {
               game
             </h3>
           )}
-        {finishedState && finishedState === "draw" && (
-          <h3 className="finished-state">It's a Draw</h3>
-        )}
+        {finishedState &&
+          finishedState !== "opponentLeftMatch" &&
+          finishedState === "draw" && (
+            <h3 className="finished-state">It's a Draw</h3>
+          )}
       </div>
       {!finishedState && opponentName && (
         <h2>You are playing against {opponentName}</h2>
