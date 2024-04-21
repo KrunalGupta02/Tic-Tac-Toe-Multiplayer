@@ -113,6 +113,10 @@ const App = () => {
     setCurrentPlayer(data.state.sign === "circle" ? "cross" : "circle");
   });
 
+  socket?.on("opponentLeftMatch", () => {
+    setFinishedState("opponent left the match");
+  });
+
   const playOnlineClick = async () => {
     const result = await takePlayerName();
 
@@ -235,6 +239,9 @@ const App = () => {
       </div>
       {!finishedState && opponentName && (
         <h2>You are playing against {opponentName}</h2>
+      )}
+      {finishedState && finishedState === "opponentLeftMatch" && (
+        <h2>You won the match, Opponent has left</h2>
       )}
     </div>
   );
